@@ -15,7 +15,7 @@ RwTexDictionary* CTxdStore::ms_pStoredTxd;
 void CTxdStore::InjectHooks() {
     //    ReversibleHooks::Install("CTxdStore", "PushCurrentTxd", 0x7316A0, &CTxdStore::PushCurrentTxd);
     //    ReversibleHooks::Install("CTxdStore", "PopCurrentTxd", 0x7316B0, &CTxdStore::PopCurrentTxd);
-    //    ReversibleHooks::Install("CTxdStore", "FindTxdSlot_name", 0x731850, static_cast<int (*)(char const*)>(&CTxdStore::FindTxdSlot));
+    ReversibleHooks::Install("CTxdStore", "FindTxdSlot_name", 0x731850, static_cast<int (*)(char const*)>(&CTxdStore::FindTxdSlot));
     //    ReversibleHooks::Install("CTxdStore", "FindTxdSlot_hash", 0x7318E0, static_cast<int (*)(unsigned int)>(&CTxdStore::FindTxdSlot));
     //    ReversibleHooks::Install("CTxdStore", "StartLoadTxd", 0x731930, &CTxdStore::StartLoadTxd);
     //    ReversibleHooks::Install("CTxdStore", "Create", 0x731990, &CTxdStore::Create);
@@ -105,7 +105,33 @@ void CTxdStore::SetCurrentTxd(int index) {
 // find txd by name. Returning value is txd index
 // 0x731850
 int CTxdStore::FindTxdSlot(char const* name) {
-    return ((int(__cdecl*)(char const*))0x731850)(name);
+    constexpr int32_t& lastTxdIndex = *(int32_t*)0xC88014;
+    const auto nameHash = CKeyGen::GetUppercaseKey(name);
+    const auto nPoolSize = ms_pTxdPool->GetSize();
+
+    if (lastTxdIndex >= 0) {
+        // Backwards loop from `lastTxdIndex`
+        for (auto i = lastTxdIndex; i != -1; i--) {
+            if (TxdDef* txd = ms_pTxdPool->GetAt(i)) {
+                if (txd->m_hash == nameHash) {
+                    lastTxdIndex = i;
+                    return i;
+                }
+            }
+        }
+    }
+
+    // Forward loop from `lastTxdIndex + 1`
+    for (auto i = lastTxdIndex + 1; i < nPoolSize; i++) {
+        if (TxdDef* txd = ms_pTxdPool->GetAt(i)) {
+            if (txd->m_hash == nameHash) {
+                lastTxdIndex = i;
+                return i;
+            }
+        }
+    }
+
+    return -1;
 }
 
 // find txd by name hash. Returning value is txd index
