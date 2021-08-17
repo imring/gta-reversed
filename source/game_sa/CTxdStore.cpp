@@ -137,7 +137,14 @@ int CTxdStore::FindTxdSlot(char const* name) {
 // find txd by name hash. Returning value is txd index
 // 0x7318E0
 int CTxdStore::FindTxdSlot(unsigned int hash) {
-    return ((signed int(__cdecl*)(unsigned int))0x7318E0)(hash);
+    for (auto i = 0; i < ms_pTxdPool->GetSize(); i++) {
+        if (TxdDef* txd = ms_pTxdPool->GetAt(i)) {
+            if (txd->m_hash == hash) {
+                return i;
+            }
+        }
+    }
+    return -1;
 }
 
 // plugin-sdk has named it to getTexDictionary
