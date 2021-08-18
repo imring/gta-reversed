@@ -3,13 +3,13 @@
 CInterestingEvents& g_InterestingEvents = *(CInterestingEvents*)0xC0B058;
 
 void CInterestingEvents::InjectHooks() {
-//    ReversibleHooks::Install("CInterestingEvents", "Constructor", 0x6023A0, &CInterestingEvents::Constructor);
-//    ReversibleHooks::Install("CInterestingEvents", "Destructor", 0x856880, &CInterestingEvents::Destructor);
-//    ReversibleHooks::Install("CInterestingEvents", "Add", 0x602590, &CInterestingEvents::Add);
-//    ReversibleHooks::Install("CInterestingEvents", "ScanForNearbyEntities", 0x605A30, &CInterestingEvents::ScanForNearbyEntities);
-//    ReversibleHooks::Install("CInterestingEvents", "GetInterestingEvent", 0x6028A0, &CInterestingEvents::GetInterestingEvent);
-//    ReversibleHooks::Install("CInterestingEvents", "InvalidateEvent", 0x602960, &CInterestingEvents::InvalidateEvent);
-//    ReversibleHooks::Install("CInterestingEvents", "InvalidateNonVisibleEvents", 0x6029C0, &CInterestingEvents::InvalidateNonVisibleEvents);
+    //    ReversibleHooks::Install("CInterestingEvents", "Constructor", 0x6023A0, &CInterestingEvents::Constructor);
+    //    ReversibleHooks::Install("CInterestingEvents", "Destructor", 0x856880, &CInterestingEvents::Destructor);
+    //    ReversibleHooks::Install("CInterestingEvents", "Add", 0x602590, &CInterestingEvents::Add);
+    //    ReversibleHooks::Install("CInterestingEvents", "ScanForNearbyEntities", 0x605A30, &CInterestingEvents::ScanForNearbyEntities);
+    //    ReversibleHooks::Install("CInterestingEvents", "GetInterestingEvent", 0x6028A0, &CInterestingEvents::GetInterestingEvent);
+    //    ReversibleHooks::Install("CInterestingEvents", "InvalidateEvent", 0x602960, &CInterestingEvents::InvalidateEvent);
+    //    ReversibleHooks::Install("CInterestingEvents", "InvalidateNonVisibleEvents", 0x6029C0, &CInterestingEvents::InvalidateNonVisibleEvents);
 }
 
 // 0x6023A0
@@ -48,8 +48,8 @@ void CInterestingEvents::GetInterestingEvent() {
 }
 
 // 0x602960
-void CInterestingEvents::InvalidateEvent(const void* interestingEvent) {
-    plugin::CallMethod<0x602960, CInterestingEvents*, const void*>(this, interestingEvent);
+void CInterestingEvents::InvalidateEvent(const TInterestingEvent* interestingEvent) {
+    plugin::CallMethod<0x602960, CInterestingEvents*, const TInterestingEvent*>(this, interestingEvent);
 }
 
 // 0x6029C0
